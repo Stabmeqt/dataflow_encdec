@@ -10,16 +10,16 @@ mvn clean package
 Execute the jar with the following command (make sure to change relevant properties from example to real ones):
 ```bash
 java -jar jdbcToCsv-1.0-SNAPSHOT.jar \
---cloudSqlInstance=<projectId>:<zoneId>:<instanceId> \
---database=<databaseName> \
+--driverName=<driver name> \
+--connectionString="<full DB connection string>" \
 --user=<dbUser> \
 --password=<dbUserPassword> \
---location=<keyring location> \
---keyring=<keyring name> \
---key=<key name> \
 --outputBucket=<bucket name> \
 --runner=DataflowRunner \
 --gcpTempLocation=gs://<bucket name>/temporary  \
 --project=<projectId> \
---query="SELECT * FROM <table name> LIMIT 10"
+--query="<your query text here>" \
+--fetchSize=10
 ```
+
+Fetch size is the size of the data that is going to be fetched and loaded in memory per every database call. It is optional and defaults to 50000

@@ -11,20 +11,6 @@ import java.sql.ResultSet;
 
 public class JdbcToCsvRowMapper implements JdbcIO.RowMapper<String> {
 
-    private boolean isEncrypt;
-    private String projectId;
-    private String location;
-    private String keyring;
-    private String key;
-
-    public JdbcToCsvRowMapper(JdbcToCsvOptions options) {
-        isEncrypt = options.isEncrypt();
-        projectId = options.getProject();
-        location = options.getLocation();
-        keyring = options.getKeyring();
-        key = options.getKey();
-    }
-
     @Override
     public String mapRow(ResultSet resultSet) throws Exception {
         final StringWriter stringWriter = new StringWriter();
@@ -40,16 +26,6 @@ public class JdbcToCsvRowMapper implements JdbcIO.RowMapper<String> {
             csvPrinter.printRecords(resultSet);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-
-        if (isEncrypt) {
-            final byte[] plainTextBytes = stringWriter.toString().getBytes();
-            return new String(Util.encrypt(
-                    projectId,
-                    location,
-                    keyring,
-                    key,
-                    plainTextBytes));
         }
 
         return stringWriter.toString();

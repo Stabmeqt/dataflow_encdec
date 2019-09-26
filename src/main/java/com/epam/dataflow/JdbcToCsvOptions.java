@@ -5,17 +5,14 @@ import org.apache.beam.sdk.options.Default;
 
 public interface JdbcToCsvOptions extends DataflowPipelineOptions {
 
-    String getLocation();
-    void setLocation(String location);
+    String getConnectionString();
+    void setConnectionString(String connectionString);
 
-    String getKeyring();
-    void setKeyring(String keyring);
+    String getConnectionProperties();
+    void setConnectionProperties(String connectionProperties);
 
-    String getKey();
-    void setKey(String key);
-
-    String getKeyVersion();
-    void setKeyVersion(String keyVersion);
+    String getDriverName();
+    void setDriverName(String driverName);
 
     String getQuery();
     void setQuery(String query);
@@ -23,26 +20,13 @@ public interface JdbcToCsvOptions extends DataflowPipelineOptions {
     String getOutputBucket();
     void setOutputBucket(String outputBucket);
 
-    String getKeyName();
-    void setKeyName(String keyName);
-
-    @Default.Boolean(false)
-    Boolean isEncrypt();
-    void setEncrypt(Boolean encrypt);
-
-    @Default.Boolean(false)
-    Boolean isDecrypt();
-    void setDecrypt(Boolean decrypt);
-
-    String getCloudSqlInstance();
-    void setCloudSqlInstance(String cloudSqlInstance);
-
-    String getDatabase();
-    void setDatabase(String database);
-
     String getUser();
     void setUser(String user);
 
     String getPassword();
     void setPassword(String password);
+
+    @Default.Integer(50_000)
+    int getFetchSize();
+    void setFetchSize(int fetchSize);
 }
