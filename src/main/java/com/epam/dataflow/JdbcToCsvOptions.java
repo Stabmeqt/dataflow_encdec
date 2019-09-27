@@ -29,4 +29,12 @@ public interface JdbcToCsvOptions extends DataflowPipelineOptions {
     @Default.Integer(50_000)
     int getFetchSize();
     void setFetchSize(int fetchSize);
+
+    @Default.Integer(1)
+    int getMinPoolSize();
+    void setMinPoolSize(int minPoolSize);
+
+    @Default.Integer(10)
+    int getMaxPoolSize();
+    void setMaxPoolSize(int maxPoolSize);
 }
