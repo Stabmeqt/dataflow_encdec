@@ -21,11 +21,12 @@ java -jar jdbcToCsv-1.0-SNAPSHOT.jar \
 --gcpTempLocation=gs://<bucket name>/temporary  \
 --project=<projectId> \
 --query="<your query text here>" \
---fetchSize=<fetch size>
+--fetchSize=<fetch size> \
+--pagingColumn=<row number column>
 ```
 
-Fetch size is the size of the data that is going to be fetched and loaded in memory per every database call. It is
- optional and defaults to 50000. Currently it is not used, so setting it will have no impact at all.
+Fetch size is the size of the data that is going to be fetched and loaded in memory per every database call. It is used
+with paging column to construct query pagination.
 
 MinPoolSize - this setting defaults to 1 if omitted.
 

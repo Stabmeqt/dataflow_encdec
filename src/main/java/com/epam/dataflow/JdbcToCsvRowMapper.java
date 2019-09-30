@@ -20,7 +20,6 @@ public class JdbcToCsvRowMapper implements JdbcIO.RowMapper<String> {
                     new CSVPrinter(
                             stringWriter,
                             CSVFormat.DEFAULT
-                                    .withHeader(resultSet)
                                     .withQuoteMode(QuoteMode.NON_NUMERIC)
                     );
             csvPrinter.printRecords(resultSet);

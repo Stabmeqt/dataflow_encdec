@@ -37,4 +37,7 @@ public interface JdbcToCsvOptions extends DataflowPipelineOptions {
     @Default.Integer(10)
     int getMaxPoolSize();
     void setMaxPoolSize(int maxPoolSize);
+
+    String getPagingColumn();
+    void setPagingColumn(String pagingColumn);
 }

@@ -14,86 +14,100 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
-	private Util() {}
+	private static Pattern TABLE_NAME_PATTERN =
+			Pattern.compile("from\\s+(?:\\w+\\.)*(\\w+)($|\\s+[WHERE,JOIN,START\\s+WITH,ORDER\\s+BY,GROUP\\s+BY])",
+					Pattern.CASE_INSENSITIVE);
 
-	/**
-	 * Encrypts the given plaintext using the specified crypto key.
-	 */
-	public static byte[] encrypt(
-			String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] plaintext)
-			throws IOException {
+    private Util() {}
 
-		// Create the KeyManagementServiceClient using try-with-resources to manage client cleanup.
-		try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
+    public static String getTableNameFromQuery(String queryString) {
+        Matcher tableNameMatcher = TABLE_NAME_PATTERN.matcher(queryString);
+        while (tableNameMatcher.find())
+            return tableNameMatcher.group(1);
 
-			// The resource name of the cryptoKey
-			String resourceName = CryptoKeyName.format(projectId, locationId, keyRingId, cryptoKeyId);
+        return null;
+    }
 
-			// Encrypt the plaintext with Cloud KMS.
-			EncryptResponse response = client.encrypt(resourceName, ByteString.copyFrom(plaintext));
+    /**
+     * Encrypts the given plaintext using the specified crypto key.
+     */
+    public static byte[] encrypt(
+            String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] plaintext)
+            throws IOException {
 
-			// Extract the ciphertext from the response.
-			return response.getCiphertext().toByteArray();
-		}
-	}
+        // Create the KeyManagementServiceClient using try-with-resources to manage client cleanup.
+        try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
 
-	/**
-	 * Decrypts the provided ciphertext with the specified crypto key.
-	 */
-	public static byte[] decrypt(
-			String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] ciphertext)
-			throws IOException {
+            // The resource name of the cryptoKey
+            String resourceName = CryptoKeyName.format(projectId, locationId, keyRingId, cryptoKeyId);
 
-		// Create the KeyManagementServiceClient using try-with-resources to manage client cleanup.
-		try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
+            // Encrypt the plaintext with Cloud KMS.
+            EncryptResponse response = client.encrypt(resourceName, ByteString.copyFrom(plaintext));
 
-			// The resource name of the cryptoKey
-			String resourceName = CryptoKeyName.format(projectId, locationId, keyRingId, cryptoKeyId);
+            // Extract the ciphertext from the response.
+            return response.getCiphertext().toByteArray();
+        }
+    }
 
-			// Decrypt the ciphertext with Cloud KMS.
-			DecryptResponse response = client.decrypt(resourceName, ByteString.copyFrom(ciphertext));
+    /**
+     * Decrypts the provided ciphertext with the specified crypto key.
+     */
+    public static byte[] decrypt(
+            String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] ciphertext)
+            throws IOException {
 
-			// Extract the plaintext from the response.
-			return response.getPlaintext().toByteArray();
-		}
-	}
+        // Create the KeyManagementServiceClient using try-with-resources to manage client cleanup.
+        try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
 
-	public static byte[] encryptRSA(String keyName, byte[] plaintext)
-			throws IOException, GeneralSecurityException {
-		// Create the Cloud KMS client.
-		try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
-			// Get the public key
-			com.google.cloud.kms.v1.PublicKey pub = client.getPublicKey(keyName);
-			String pemKey = pub.getPem();
-			pemKey = pemKey.replaceFirst("-----BEGIN PUBLIC KEY-----", "");
-			pemKey = pemKey.replaceFirst("-----END PUBLIC KEY-----", "");
-			pemKey = pemKey.replaceAll("\\s", "");
-			byte[] derKey = BaseEncoding.base64().decode(pemKey);
-			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(derKey);
-			PublicKey rsaKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+            // The resource name of the cryptoKey
+            String resourceName = CryptoKeyName.format(projectId, locationId, keyRingId, cryptoKeyId);
 
-			// Encrypt plaintext for the 'RSA_DECRYPT_OAEP_2048_SHA256' key.
-			// For other key algorithms:
-			// https://docs.oracle.com/javase/7/docs/api/javax/crypto/Cipher.html
-			Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-			OAEPParameterSpec oaepParams = new OAEPParameterSpec(
-					"SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
-			cipher.init(Cipher.ENCRYPT_MODE, rsaKey, oaepParams);
+            // Decrypt the ciphertext with Cloud KMS.
+            DecryptResponse response = client.decrypt(resourceName, ByteString.copyFrom(ciphertext));
 
-			return cipher.doFinal(plaintext);
-		}
-	}
+            // Extract the plaintext from the response.
+            return response.getPlaintext().toByteArray();
+        }
+    }
 
-	public static byte[] decryptRSA(String keyName, byte[] ciphertext) throws IOException {
-		// Create the Cloud KMS client.
-		try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
-			AsymmetricDecryptResponse response = client.asymmetricDecrypt(
-					keyName, ByteString.copyFrom(ciphertext));
-			return response.getPlaintext().toByteArray();
-		}
-	}
+    public static byte[] encryptRSA(String keyName, byte[] plaintext)
+            throws IOException, GeneralSecurityException {
+        // Create the Cloud KMS client.
+        try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
+            // Get the public key
+            com.google.cloud.kms.v1.PublicKey pub = client.getPublicKey(keyName);
+            String pemKey = pub.getPem();
+            pemKey = pemKey.replaceFirst("-----BEGIN PUBLIC KEY-----", "");
+            pemKey = pemKey.replaceFirst("-----END PUBLIC KEY-----", "");
+            pemKey = pemKey.replaceAll("\\s", "");
+            byte[] derKey = BaseEncoding.base64().decode(pemKey);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(derKey);
+            PublicKey rsaKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+
+            // Encrypt plaintext for the 'RSA_DECRYPT_OAEP_2048_SHA256' key.
+            // For other key algorithms:
+            // https://docs.oracle.com/javase/7/docs/api/javax/crypto/Cipher.html
+            Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+            OAEPParameterSpec oaepParams = new OAEPParameterSpec(
+                    "SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
+            cipher.init(Cipher.ENCRYPT_MODE, rsaKey, oaepParams);
+
+            return cipher.doFinal(plaintext);
+        }
+    }
+
+    public static byte[] decryptRSA(String keyName, byte[] ciphertext) throws IOException {
+        // Create the Cloud KMS client.
+        try (KeyManagementServiceClient client = KeyManagementServiceClient.create()) {
+            AsymmetricDecryptResponse response = client.asymmetricDecrypt(
+                    keyName, ByteString.copyFrom(ciphertext));
+            return response.getPlaintext().toByteArray();
+        }
+    }
 
 }

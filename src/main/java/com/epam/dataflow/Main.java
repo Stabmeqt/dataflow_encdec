@@ -29,7 +29,7 @@ public class Main {
 
         // writing csv data to the cloud storage bucket
         csvStrings.apply(TextIO.write().to("gs://" + pipelineOptions.getOutputBucket() + "/data_from_jdbc")
-                .withSuffix(".csv"));
+                .withSuffix(".csv").withoutSharding());
 
         pipeline.run();
     }
