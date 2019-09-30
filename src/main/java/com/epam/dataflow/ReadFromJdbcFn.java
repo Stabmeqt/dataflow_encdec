@@ -24,9 +24,9 @@ public class ReadFromJdbcFn extends PTransform<PBegin, PCollection<String>> {
                 options.getUser(),
                 options.getPassword(), options.getMinPoolSize(), options.getMaxPoolSize()).getDataSource();
         rowCountQuery = String.format("SELECT count(%s) FROM %s",
-                options.getPagingColumn(), Util.getTableNameFromQuery(options.getQuery()));
+                options.getPagingColumn(), Util.getTableNameFromQuery(options.getQuery().trim()));
         selectQuery =
-                String.format("%s WHERE %s >= ? and %s < ?", options.getQuery(),
+                String.format("%s WHERE %s >= ? and %s < ?", options.getQuery().trim(),
                         options.getPagingColumn(), options.getPagingColumn());
     }
 
