@@ -26,7 +26,8 @@ java -jar jdbcToCsv-1.0-SNAPSHOT.jar \
 --query="<your query text here>" \
 --fetchSize=<fetch size> \
 --pagingColumn=<row number column> \
---decrypt 
+--keyPath=gs://<bucket name>/<path to key> \
+--decrypt
 ```
 
 Fetch size is the size of the data that is going to be fetched and loaded in memory per every database call. It is used
