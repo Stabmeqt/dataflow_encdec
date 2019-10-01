@@ -40,4 +40,11 @@ public interface JdbcToCsvOptions extends DataflowPipelineOptions {
 
     String getPagingColumn();
     void setPagingColumn(String pagingColumn);
+
+    @Default.Boolean(false)
+    boolean getDecrypt();
+    void setDecrypt(boolean decrypt);
+
+    String getKeyPath();
+    void setKeyPath(String keyPath);
 }

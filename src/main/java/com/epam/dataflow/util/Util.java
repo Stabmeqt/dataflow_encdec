@@ -1,7 +1,6 @@
-package com.epam.dataflow;
+package com.epam.dataflow.util;
 
 
-import com.google.cloud.kms.v1.*;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 
@@ -33,9 +32,8 @@ public class Util {
         return null;
     }
 
-    /**
-     * Encrypts the given plaintext using the specified crypto key.
-     */
+    /*
+
     public static byte[] encrypt(
             String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] plaintext)
             throws IOException {
@@ -54,9 +52,6 @@ public class Util {
         }
     }
 
-    /**
-     * Decrypts the provided ciphertext with the specified crypto key.
-     */
     public static byte[] decrypt(
             String projectId, String locationId, String keyRingId, String cryptoKeyId, byte[] ciphertext)
             throws IOException {
@@ -110,4 +105,5 @@ public class Util {
         }
     }
 
+     */
 }

@@ -1,4 +1,4 @@
-package com.epam.dataflow;
+package com.epam.dataflow.jdbc;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 

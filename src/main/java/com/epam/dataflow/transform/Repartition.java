@@ -1,4 +1,4 @@
-package com.epam.dataflow;
+package com.epam.dataflow.transform;
 
 import org.apache.beam.sdk.transforms.*;
 import org.apache.beam.sdk.values.KV;

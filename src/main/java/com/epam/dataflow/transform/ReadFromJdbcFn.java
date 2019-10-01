@@ -1,5 +1,10 @@
-package com.epam.dataflow;
+package com.epam.dataflow.transform;
 
+import com.epam.dataflow.*;
+import com.epam.dataflow.jdbc.JdbcToCsvRowMapper;
+import com.epam.dataflow.jdbc.PoolProvider;
+import com.epam.dataflow.jdbc.RangeHolder;
+import com.epam.dataflow.util.Util;
 import org.apache.beam.sdk.coders.AvroCoder;
 import org.apache.beam.sdk.coders.StringUtf8Coder;
 import org.apache.beam.sdk.io.jdbc.JdbcIO;
@@ -59,6 +64,7 @@ public class ReadFromJdbcFn extends PTransform<PBegin, PCollection<String>> {
 
         return rangeHolders
                 .apply(JdbcIO.<RangeHolder, String>readAll()
+                        .withOutputParallelization(true)
                         .withDataSourceConfiguration(dataSourceConfiguration)
                         .withParameterSetter((element, preparedStatement) -> {
                             preparedStatement.setLong(1, element.getRangeStart());

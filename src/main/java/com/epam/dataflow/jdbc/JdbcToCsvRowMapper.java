@@ -1,4 +1,4 @@
-package com.epam.dataflow;
+package com.epam.dataflow.jdbc;
 
 import org.apache.beam.sdk.io.jdbc.JdbcIO;
 import org.apache.commons.csv.CSVFormat;

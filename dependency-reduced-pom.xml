@@ -18,7 +18,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.5.0</version>
         <configuration>
-          <mainClass>com.epam.ab.join.Main</mainClass>
+          <mainClass>com.epam.dataflow.Main</mainClass>
         </configuration>
       </plugin>
       <plugin>
